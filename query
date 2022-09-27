@@ -1,0 +1,14 @@
+with Averages as (
+    select 
+           id,
+           avg(uv) averageUV,
+           avg(temperature) averageTemp,
+           avg(humidity) averageHum,
+           dateadd(second, avg(datediff(second,'1970-01-01',[timestamp])), '1970-01-01') as Time,
+           (case when avg(humidity) > 85 and avg(temperature) > 85 then 'Sweaty' else 'Not sweaty' end) as Feel
+from practice timestamp by [timestamp]
+group by id, tumblingWindow(second, 5)
+)
+
+select * into [ehoutput]
+from [Averages]
